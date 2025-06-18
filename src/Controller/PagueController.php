@@ -20,7 +20,7 @@ class PagueController extends AbstractController
     public function employeeList():Response
     {
         $employeeList=$this->employeeRepository->findAll();
-        return $this->render('pague/index.html',[
+        return $this->render('pague/index.html.twig',[
             'employeeList'=>$employeeList,
         ]);
     }
