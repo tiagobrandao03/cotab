@@ -4,6 +4,10 @@ namespace App\Entity;
 
 use App\Repository\NumerosocialRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\ManyToMany;
+use phpDocumentor\Reflection\Types\Collection;
 
 #[ORM\Entity(repositoryClass: NumerosocialRepository::class)]
 class Numerosocial
@@ -19,16 +23,12 @@ class Numerosocial
     #[ORM\Column(length: 100)]
     private ?string $cpf_filho = null;
 
-    #[ORM\OneToOne(inversedBy: 'numerosocial', cascade: ['persist', 'remove'])]
-    private ?Employee $numero_social = null;
 
-    #[ORM\OneToOne(mappedBy: 'numerosociais', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(targetEntity: Employee::class, inversedBy: "numerosocial")]
+    #[ORM\JoinColumn(name: "employee_id", referencedColumnName: "id")]
     private ?Employee $employee = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+
 
     public function getNomeFilho(): ?string
     {
@@ -54,17 +54,17 @@ class Numerosocial
         return $this;
     }
 
-    public function getNumeroSocial(): ?Employee
+    public function getNumerosocial(): ?Employee
     {
-        return $this->numero_social;
+        return $this->numerosocial;
     }
 
-    public function setNumeroSocial(?Employee $numero_social): static
+    public function setNumerosocial(?Employee $numerosocial): void
     {
-        $this->numero_social = $numero_social;
-
-        return $this;
+        $this->numerosocial = $numerosocial;
     }
+
+
 
     public function getEmployee(): ?Employee
     {
@@ -74,13 +74,14 @@ class Numerosocial
     public function setEmployee(?Employee $employee): static
     {
         // unset the owning side of the relation if necessary
-        if ($employee === null && $this->employee !== null) {
-            $this->employee->setNumerosociais(null);
+
+        if ($employee !== null && $employee->getNumerosocial() !== $this) {
+            $employee->setNumerosocial($this);
         }
 
         // set the owning side of the relation if necessary
-        if ($employee !== null && $employee->getNumerosociais() !== $this) {
-            $employee->setNumerosociais($this);
+        if ($employee === null && $this->employee !== null) {
+            $this->employee->setNumerosocial(null);
         }
 
         $this->employee = $employee;

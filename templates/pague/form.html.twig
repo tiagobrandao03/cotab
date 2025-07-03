@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Novo Funcionário{% endblock %}
+
+{% block body %}
+    <form method="post" action="{{ path('app_pague_store') }}">
+        <div class="mb-3">
+            <h2>Dados do Funcionário</h2>
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Nome:</label>
+                <input type="text" name="name" id="name" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="cpf" class="form-label">CPF:</label>
+                <input type="text" name="cpf" id="cpf" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="faltas" class="form-label">Faltas:</label>
+                <input type="number" name="faltas" id="faltas" class="form-control" required>
+            </div>
+        </div>
+
+        <!-- Decimo Terceiro -->
+        <div class="mb-3">
+            <label for="decimoterceiro" class="form-label">13º Salário:</label>
+            <input type="text" name="decimoterceiro" id="decimoterceiro" class="form-control">
+        </div>
+
+        <!-- Férias -->
+        <div class="mb-3">
+            <label for="ferias" class="form-label">Férias:</label>
+            <input type="text" name="ferias" id="ferias" class="form-control">
+        </div>
+
+        <!-- Acidentado -->
+        <div class="mb-3">
+            <label for="acidentado" class="form-label">Acidentado:</label>
+            <input type="text" name="acidentado" id="acidentado" class="form-control">
+        </div>
+
+        <!-- Faltas Justificadas -->
+        <div class="mb-3">
+            <label for="faltas_justificadas" class="form-label">Faltas Justificadas:</label>
+            <input type="number" name="faltas_justificadas" id="faltas_justificadas" class="form-control">
+        </div>
+
+        <!-- Faltas Injustificadas -->
+        <div class="mb-3">
+            <label for="faltas_injustificadas" class="form-label">Faltas Injustificadas:</label>
+            <input type="number" name="faltas_injustificadas" id="faltas_injustificadas" class="form-control">
+        </div>
+
+        <!-- Dias Trabalhados -->
+        <div class="mb-3">
+            <label for="dias_trabalhados" class="form-label">Dias Trabalhados:</label>
+            <input type="number" name="dias_trabalhados" id="dias_trabalhados" class="form-control">
+        </div>
+
+        <!-- Ativo -->
+        <div class="mb-3">
+            <label for="ativo" class="form-label">Está Ativo? (true/false):</label>
+            <input type="text" name="ativo" id="ativo" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <h2>Dependentes</h2>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="tem_dependentes" name="tem_dependentes"
+                       {% if dependentesCount > 0 %}checked{% endif %}>
+                <label class="form-check-label" for="tem_dependentes">
+                    Possui dependentes?
+                </label>
+            </div>
+
+            <div id="dependentes-container" style="display: {% if dependentesCount > 0 %}block{% else %}none{% endif %};">
+                <div class="form-group mb-3">
+                    <label for="quantidade_dependentes">Quantidade de Dependentes</label>
+                    <select class="form-control" id="quantidade_dependentes" name="quantidade_dependentes">
+                        {% for i in 1..10 %}
+                            <option value="{{ i }}" {% if i == dependentesCount %}selected{% endif %}>{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div id="dependentes-fields">
+                    {% for i in 1..dependentesCount %}
+                        <div class="dependente-field mb-3">
+                            <h4>Dependente {{ i }}</h4>
+                            <div class="form-group">
+                                <label for="nome_filho_{{ i }}">Nome do Filho</label>
+                                <input type="text" class="form-control" name="nome_filho[]" id="nome_filho_{{ i }}"
+                                       placeholder="Nome completo" value="{{ app.request.request.get('nome_filho')[i-1] ?? '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="cpf_filho_{{ i }}">CPF do Filho</label>
+                                <input type="text" class="form-control" name="cpf_filho[]" id="cpf_filho_{{ i }}"
+                                       placeholder="000.000.000-00" value="{{ app.request.request.get('cpf_filho')[i-1] ?? '' }}">
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-dark">Salvar</button>
+    </form>
+{% endblock %}
