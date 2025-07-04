@@ -15,23 +15,23 @@ class Employee
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\Column(length: 100)]
     private string $cpf ;
 
     #[ORM\OneToOne(mappedBy: "atfaltasJustificadas", targetEntity: Ativoemp::class, cascade: ["persist", "remove"])]
-    private ?Ativoemp $faltasJustificadas = null;
+    private ?Ativoemp $faltasJustificadas;
 
     #[ORM\OneToOne(mappedBy: "atfaltasInjustificadas", targetEntity: Ativoemp::class, cascade: ["persist", "remove"])]
-    private ?Ativoemp $faltasInjustificadas = null;
+    private ?Ativoemp $faltasInjustificadas ;
 
     #[ORM\OneToOne(
         mappedBy: "employee",
         targetEntity: Numerosocial::class,
         cascade: ["persist", "remove"]
     )]
-    private ?Numerosocial $numerosocial = null;
+    private ?Numerosocial $numerosocial ;
 
     #[ORM\OneToOne(
         mappedBy: "atdecimoterceiro",
@@ -39,7 +39,7 @@ class Employee
         cascade: ["persist","remove"]
     )]
     #[ORM\Column(length: 100)]
-    private ?Ativoemp $decimoterceiro = null;
+    private ?Ativoemp $decimoterceiro ;
 
     #[ORM\OneToOne(
         mappedBy: "atacidentado",
@@ -47,7 +47,7 @@ class Employee
         cascade: ["persist","remove"]
     )]
     #[ORM\Column(length: 100)]
-    private ?Ativoemp $acidentado = null;
+    private ?Ativoemp $acidentado ;
 
 
     //atferias
@@ -59,7 +59,7 @@ class Employee
         cascade: ["persist","remove"]
     )]
     #[ORM\Column(length: 100)]
-    private ?Ativoemp $ferias = null;
+    private ?Ativoemp $ferias;
 
 
     #[ORM\OneToOne(
@@ -68,7 +68,7 @@ class Employee
         cascade:["persist","remove"]
     )]
     #[ORM\Column(length: 100)]
-    private ?Ativoemp $daywork = null;
+    private ?Ativoemp $daywork;
 
     //daywork atdiastrabalho
     //ferias atferias
