@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Employee;
 use App\Entity\Numerosocial;
+use App\Repository\AtivoempRepository;
 use App\Repository\EmployeeRepository;
 use App\Repository\NumerosocialRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Ativoemp;
 
 class PagueController extends AbstractController
 {
@@ -18,6 +20,8 @@ class PagueController extends AbstractController
     public function __construct(
         private EmployeeRepository $employeeRepository,
         private NumerosocialRepository $numerosocialRepository,
+        private AtivoempRepository $ativoempRepository,
+
 
     ) {}
     #[Route('/pague', name: 'app_pague', methods: ['GET'])]
@@ -48,40 +52,33 @@ class PagueController extends AbstractController
         // Dados do Employee
         $name = $request->request->get('name');
         $cpf = $request->request->get('cpf');
-        $faltas = $request->request->get('faltas');
+
+        $faltasJustificadas = $request->request->get('faltasjustificadas');
+        $faltasInjustificadas =$request->request->get('faltasinjustificadas');
+        $decimoterceiroValue=$request->request->get('decimoterceiro');
+        $acidentado=$request->request->get('acidentado');
+        $ferias=$request->request->get('ferias');
+        $daywork=$request->request->get('daywork');
+        $ativo=$request->request->get('ativo');
+
 
         // Criar Employee
         $employee = new Employee($name);
         $employee->setCpf($cpf);
+        $employee->setFaltasJustificadas($faltasJustificadas);
+        $employee->setFaltasInjustificadas($faltasInjustificadas);
+        $employee->setDecimoterceiro($decimoterceiroValue);
+        $employee->setAcidentado($acidentado);
+        $employee->setFerias($ferias);
+        $employee->setDaywork($daywork);
+        $employee->setAtivo($ativo);
 
         // Criação dos objetos Ativoemp separados para cada campo
-        $objDecimo = new Ativoemp();
-        $objDecimo->setATDecimoterceiro($decimoterceiro);
-        $employee->setDecimoterceiro($objDecimo);
-
-        $objFerias = new Ativoemp();
-        $objFerias->setATFerias($ferias);
-        $employee->setFerias($objFerias);
-
-        $objAcidentado = new Ativoemp();
-        $objAcidentado->setATAcidentado($acidentado);
-        $employee->setAcidentado($objAcidentado);
-
-        $objFaltasJust = new Ativoemp();
-        $objFaltasJust->setFaltasemp($faltasJustificadas);
-        $employee->setFaltasJustificadas($objFaltasJust);
-
-        $objFaltasInjust = new Ativoemp();
-        $objFaltasInjust->setFaltasemp($faltasInjustificadas);
-        $employee->setFaltasInjustificadas($objFaltasInjust);
-
-        $objDias = new Ativoemp();
-        $objDias->setAtDiastrabalho($diasTrabalhados);
-        $employee->setDaywork($objDias);
-
-        $objAtivo = new Ativoemp();
-        $objAtivo->setAtivoemp($ativo);
-        $employee->setAtivo($objAtivo);
+        if ($decimoterceiroValue) {
+            $ativoDecimoTerceiro = new Ativoemp();
+            // Configure os valores necessários no objeto Ativoemp
+            $employee->setDecimoterceiro($ativoDecimoTerceiro);
+        }
 
 
         // Verificar se tem dependentes

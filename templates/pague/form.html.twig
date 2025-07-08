@@ -5,7 +5,7 @@
 {% block body %}
     <form method="post" action="{{ path('app_pague_store') }}">
         <div class="mb-3">
-            <h2>Dados do Funcionário</h2>
+            <h2>Dados do Funcionário</h2>.
 
             <div class="mb-3">
                 <label for="name" class="form-label">Nome:</label>
@@ -39,19 +39,19 @@
         <!-- Faltas Justificadas -->
         <div class="mb-3">
             <label for="faltas_justificadas" class="form-label">Faltas Justificadas:</label>
-            <input type="number" name="faltas_justificadas" id="faltas_justificadas" class="form-control">
+            <input type="number" name="faltasJustificadas" id="faltasjustificadas" class="form-control">
         </div>
 
         <!-- Faltas Injustificadas -->
         <div class="mb-3">
             <label for="faltas_injustificadas" class="form-label">Faltas Injustificadas:</label>
-            <input type="number" name="faltas_injustificadas" id="faltas_injustificadas" class="form-control">
+            <input type="number" name="faltasInjustificadas" id="faltasinjustificadas" class="form-control">
         </div>
 
         <!-- Dias Trabalhados -->
         <div class="mb-3">
             <label for="dias_trabalhados" class="form-label">Dias Trabalhados:</label>
-            <input type="number" name="dias_trabalhados" id="dias_trabalhados" class="form-control">
+            <input type="number" name="daywork" id="daywork" class="form-control">
         </div>
 
         <!-- Ativo -->

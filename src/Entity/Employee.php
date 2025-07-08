@@ -38,15 +38,14 @@ class Employee
         targetEntity: Ativoemp::class,
         cascade: ["persist","remove"]
     )]
-    #[ORM\Column(length: 100)]
-    private ?Ativoemp $decimoterceiro ;
+
+    private ?Ativoemp $decimoterceiro = null ;
 
     #[ORM\OneToOne(
         mappedBy: "atacidentado",
         targetEntity: Ativoemp::class,
         cascade: ["persist","remove"]
     )]
-    #[ORM\Column(length: 100)]
     private ?Ativoemp $acidentado ;
 
 
@@ -58,7 +57,6 @@ class Employee
         targetEntity: Ativoemp::class,
         cascade: ["persist","remove"]
     )]
-    #[ORM\Column(length: 100)]
     private ?Ativoemp $ferias;
 
 
@@ -67,7 +65,6 @@ class Employee
         targetEntity: Ativoemp::class,
         cascade:["persist","remove"]
     )]
-    #[ORM\Column(length: 100)]
     private ?Ativoemp $daywork;
 
     //daywork atdiastrabalho
@@ -75,7 +72,6 @@ class Employee
     //atdiastrabalho daywork
     //Ativo atemployee
     #[ORM\OneToOne(inversedBy: 'ativoemp', cascade: ['persist', 'remove'])]
-    #[ORM\Column(length: 100)]
     private ?Ativoemp $ativo = null;
     // No ArrayCollection needed!
 
@@ -185,12 +181,12 @@ class Employee
     }
 
 
-    public function getDecimoterceiro(): ?string
+    public function getDecimoTerceiro(): ?string
     {
         return $this->decimoterceiro;
     }
 
-    public function setDecimoterceiro(?decimoterceiro $decimoterceiro): void
+    public function setDecimoTerceiro(?Ativoemp $decimoterceiro): void
     {
         $this->decimoterceiro = $decimoterceiro;
         if ($decimoterceiro !==null && $decimoterceiro->
@@ -198,7 +194,7 @@ class Employee
             $decimoterceiro->setATDecimoterceiro($this);
         }
     }
-    public function setATDecimoterceiro(?atdecimoterceiro $atdecimoterceiro):static{
+    public function setATDecimoterceiro(?Ativoemp $atdecimoterceiro):static{
         $this->atdecimoterceiro = $atdecimoterceiro;
         if ($atdecimoterceiro !==null && $atdecimoterceiro->getDecimoterceiro() !== $this){
             $atdecimoterceiro->setDecimoterceiro($this);
@@ -210,7 +206,7 @@ class Employee
         return $this->acidentado;
     }
 
-    public function setAcidentado(?acidentado $acidentado): void
+    public function setAcidentado(?Ativoemp $acidentado): void
     {
         $this->acidentado = $acidentado;
         if($acidentado !==null &&
@@ -220,7 +216,7 @@ class Employee
 
     }
 
-    public function setATAcidentado(?atacidentado $atacidentado): static{
+    public function setATAcidentado(?Ativoemp $atacidentado): static{
         $this->atacidentado = $atacidentado;
         if($atacidentado !==null && $atacidentado->getAcidentado() !== $this){
             $atacidentado->setAcidentado($this);
@@ -263,7 +259,7 @@ class Employee
         }
     }
 
-    public function setATDiastrabalho(?atdiastrabalho $atdiastrabalho): static
+    public function setATDiastrabalho(?Ativoemp $atdiastrabalho): static
     {
         $this->atdiastrabalho = $atdiastrabalho;
         if ($atdiastrabalho !==null &&

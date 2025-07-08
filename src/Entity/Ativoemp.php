@@ -17,23 +17,24 @@ class Ativoemp
     private ?Employee $employee = null;
 
     #[ORM\OneToOne(targetEntity: Employee::class,inversedBy: "decimoterceiro")]
-    private ?string $atdecimoterceiro = null;
+    #[ORM\JoinColumn(name: "employee_id", referencedColumnName: "id", onDelete: "CASCADE")]
+    private ?string $atdecimoterceiro ;
 
     #[ORM\OnetoOne(targetEntity: Employee::class,inversedBy: "acidentado")]
-    private ?string $atacidentado = null;
+    private ?string $atacidentado ;
 
     #[ORM\OneToOne(targetEntity: Employee::class,inversedBy: "ferias")]
-    private ?string $atferias = null;
+    private ?string $atferias ;
 
     #[ORM\OneToOne(targetEntity: Employee::class,inversedBy: "diastrabalhados")]
-    private ?string $atdiastrabalho = null;
+    private ?string $atdiastrabalho ;
 
 
     #[ORM\OneToOne(targetEntity: Employee::class,inversedBy: "faltasJustificadas")]
-    private ?string $atfaltasJustificadas = null;
+    private ?string $atfaltasJustificadas ;
 
     #[ORM\OneToOne(targetEntity: Employee::class,inversedBy: "faltasInjustificadas")]
-    private ?string $atfaltasInjustificadas=null;
+    private ?string $atfaltasInjustificadas;
 
     #[ORM\OneToOne(targetEntity: Employee::class,inversedBy: "ativo")]
     private ?string $ativoemp = null;
