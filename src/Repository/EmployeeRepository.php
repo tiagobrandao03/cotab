@@ -29,7 +29,11 @@
                 $this->getEntityManager()->flush();
             }
         }
-
+        public function addNumerosocialToEmployee(Employee $employee, Numerosocial $numerosocial): void
+        {
+            $numerosocial->setEmployee($employee);
+            $this->getEntityManager()->persist($numerosocial);
+        }
     //    /**
     //     * @return Employee[] Returns an array of Employee objects
     //     */

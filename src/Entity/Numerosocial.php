@@ -24,10 +24,9 @@ class Numerosocial
     private ?string $cpf_filho = null;
 
 
-    #[ORM\OneToOne(targetEntity: Employee::class, inversedBy: "numerosocial")]
-    #[ORM\JoinColumn(name: "employee_id", referencedColumnName: "id")]
+    #[ORM\ManyToOne(inversedBy: "numerosocial")]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Employee $employee = null;
-
 
 
     public function getNomeFilho(): ?string
@@ -73,15 +72,14 @@ class Numerosocial
 
     public function setEmployee(?Employee $employee): static
     {
-        // unset the owning side of the relation if necessary
-
-        if ($employee !== null && $employee->getNumerosocial() !== $this) {
-            $employee->setNumerosocial($this);
+        // Se estiver vinculando um novo employee
+        if ($employee !== null && !$employee->getNumerosocial()->contains($this)) {
+            $employee->addNumerosocial($this);
         }
 
-        // set the owning side of the relation if necessary
+        // Se estiver removendo a associação
         if ($employee === null && $this->employee !== null) {
-            $this->employee->setNumerosocial(null);
+            $this->employee->removeNumerosocial($this);
         }
 
         $this->employee = $employee;

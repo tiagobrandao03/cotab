@@ -13,23 +13,31 @@ class Ativoemp
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(mappedBy: 'Ativo', cascade: ['persist', 'remove'])]
+    //#[ORM\OneToOne(mappedBy: 'Ativo', cascade: ['persist', 'remove'])]
+   // private ?Employee $employee = null;
+    #[ORM\ManyToOne(inversedBy: "numerosociais")]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Employee $employee = null;
 
-    #[ORM\OneToOne(targetEntity: Employee::class,inversedBy: "decimoterceiro")]
+    #[ORM\OneToOne(targetEntity: Employee::class, inversedBy: "decimoterceiro")]
     #[ORM\JoinColumn(name: "employee_id", referencedColumnName: "id", onDelete: "CASCADE")]
-    private ?string $atdecimoterceiro ;
+    private ?Employee $atdecimoterceiro = null;
 
-    #[ORM\OnetoOne(targetEntity: Employee::class,inversedBy: "acidentado")]
-    private ?string $atacidentado ;
+    #[ORM\OneToOne(targetEntity: Employee::class, inversedBy: "acidentado")]
+    #[ORM\JoinColumn(name: "employee_id_acidentado", referencedColumnName: "id", onDelete: "CASCADE")]
+    private ?Employee $atacidentado = null;
 
-    #[ORM\OneToOne(targetEntity: Employee::class,inversedBy: "ferias")]
-    private ?string $atferias ;
+    #[ORM\OneToOne(targetEntity: Employee::class, inversedBy: "ferias")]
+    #[ORM\JoinColumn(name: "employee_id_ferias", referencedColumnName: "id", onDelete: "CASCADE")]
+    private ?Employee $atferias = null;
 
-    #[ORM\OneToOne(targetEntity: Employee::class,inversedBy: "diastrabalhados")]
-    private ?string $atdiastrabalho ;
+    #[ORM\OneToOne(targetEntity: Employee::class, inversedBy: "daywork")]
+    #[ORM\JoinColumn(name: "employee_id_daywork", referencedColumnName: "id", onDelete: "CASCADE")]
+    private ?Employee $atDiasTrabalho = null;
 
-
+    // (opcional) guarda quantos dias ele trabalhou
+    #[ORM\Column(type: 'string', length: 2, nullable: false)]
+    private string $diasTrabalho;
     #[ORM\OneToOne(targetEntity: Employee::class,inversedBy: "faltasJustificadas")]
     private ?string $atfaltasJustificadas ;
 
@@ -37,7 +45,12 @@ class Ativoemp
     private ?string $atfaltasInjustificadas;
 
     #[ORM\OneToOne(targetEntity: Employee::class,inversedBy: "ativo")]
-    private ?string $ativoemp = null;
+    #[ORM\JoinColumn(name: "employe_id_ativo",referencedColumnName: "id",onDelete: "CASCADE")]
+    private ?string $atativo = null;
+
+   // #[ORM\OneToOne(targetEntity: Employee::class,inversedBy: "ativo")]
+   // #[ORM\JoinColumn(name: "employe_id_ativo",referencedColumnName: "id",onDelete: "CASCADE")]
+    //private ?string $ativoemp = null;
 
     #[ORM\OneToOne(mappedBy: 'Ativo', cascade: ['persist', 'remove'])]
     private ?Employee $atemployee = null;
@@ -54,9 +67,10 @@ class Ativoemp
 
     public function setEmployee(Employee $atemployee): static
     {
+
         // set the owning side of the relation if necessary
-        if ($atemployee->getAtivo() !== $this) {
-            $atemployee->setAtivo($this);
+        if ($atemployee->getAtativo() !== $this) {
+            $atemployee->setAtativo($this);
         }
 
         $this->atemployee = $atemployee;
@@ -75,9 +89,9 @@ class Ativoemp
     /**
      * @param string|null $atdecimoterceiro
      */
-    public function setATDecimoterceiro(?string $atdecimoterceiro): void
+    public function setATDecimoterceiro(?Employee $employee): void
     {
-        $this->atdecimoterceiro = $atdecimoterceiro;
+        $this->atdecimoterceiro = $employee;
     }
 
     /**
@@ -91,9 +105,9 @@ class Ativoemp
     /**
      * @param string|null $atacidentado
      */
-    public function setATAcidentado(?string $atacidentado): void
+    public function setATAcidentado(?Employee $employee): void
     {
-        $this->atacidentado = $atacidentado;
+        $this->atacidentado = $employee;
     }
 
     /**
@@ -107,27 +121,35 @@ class Ativoemp
     /**
      * @param string|null $atferias
      */
-    public function setATFerias(?string $atferias): void
+    public function setATFerias(?Employee $employee): void
     {
-        $this->atferias = $atferias;
+        $this->atferias = $employee;
     }
 
     /**
      * @return string|null
      */
-    public function getAtDiastrabalho(): ?Employee
+    public function getAtDiasTrabalho(): ?Employee
     {
-        return $this->atdiastrabalho;
+        return $this->atDiasTrabalho;
     }
 
     /**
      * @param string|null $atdiastrabalho
      */
-    public function setAtDiastrabalho(?string $atdiastrabalho): void
+    public function setAtDiasTrabalho(?Employee $employee): void
     {
-        $this->atdiastrabalho = $atdiastrabalho;
+        $this->atDiasTrabalho = $employee;
     }
 
+    public function getDiasTrabalho(): string
+    {
+        return $this->diasTrabalho;
+    }
+    public function setDiasTrabalho(string $dias): void
+    {
+        $this->diasTrabalho = $dias;
+    }
     /**
      * @return string|null
      */
@@ -145,28 +167,22 @@ class Ativoemp
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function setAtivo(Ativoemp $ativo): void
+    public function getAtativo(): ?string
     {
-        $this->ativo = $ativo;
-        if ($ativo !==null &&
-            $ativo->getAtivoemp() !==$this
-        ){
-            $ativo->setAtivoemp($this);
-        }
+        return $this->atativo;
+    }
 
-    }
-    public function setAtivoemp(bool $ativoemp): static
+    /**
+     * @param string|null $atativo
+     */
+    public function setAtativo(?string $atativo): void
     {
-        $this->ativoemp = $ativoemp;
-        if (
-            $ativoemp->getAtivo() !==$this
-        ){
-            $ativoemp->setAtivo($this);
-        }
-        return $this;
+        $this->atativo = $atativo;
     }
+
+    //}
     /**
      * @return string|null
      */

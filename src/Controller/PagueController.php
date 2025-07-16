@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Ativoemp;
 
+
 class PagueController extends AbstractController
 {
 
@@ -67,11 +68,41 @@ class PagueController extends AbstractController
         $employee->setCpf($cpf);
         $employee->setFaltasJustificadas($faltasJustificadas);
         $employee->setFaltasInjustificadas($faltasInjustificadas);
-        $employee->setDecimoterceiro($decimoterceiroValue);
-        $employee->setAcidentado($acidentado);
-        $employee->setFerias($ferias);
-        $employee->setDaywork($daywork);
-        $employee->setAtivo($ativo);
+
+        //$employee->setAtivo($ativo);
+        $decimoterceiroValue = filter_var($request->request->get('decimoterceiro'), FILTER_VALIDATE_BOOLEAN);
+        $acidentadoValue = filter_var($request->request->get('acidentado'), FILTER_VALIDATE_BOOLEAN);
+        $feriasValue=filter_var($request->request->get('ferias'),FILTER_VALIDATE_BOOLEAN);
+        $ativoValue=filter_var($request->request->get('ativo'),FILTER_VALIDATE_BOOLEAN);
+        // Pega o valor enviado (string)
+        $dayworkRaw = $request->request->get('daywork');     // ex.: "15"
+
+        if (is_numeric($dayworkRaw) && $dayworkRaw >= 1 && $dayworkRaw <= 30) {
+
+            $ativoDias = new Ativoemp();
+            $ativoDias->setDiasTrabalho((string) $dayworkRaw); // Sempre salva como string, como você quer
+
+            $employee->setDaywork($ativoDias);
+
+        } else {
+            // Se não for válido, ainda assim cria para evitar NULL no banco
+            $ativoDias = new Ativoemp();
+            $ativoDias->setDiasTrabalho('0'); // valor padrão de segurança (ou pode lançar erro se preferir)
+
+            $employee->setDaywork($ativoDias);
+        }
+        if ($ativoValue){
+            $ativoEmp=new Ativoemp();
+            $employee->setFerias($ativoEmp);
+        }
+        if ($feriasValue){
+            $ativoFerias=new Ativoemp();
+            $employee->setFerias($ativoFerias);
+        }
+        if ($acidentadoValue) {
+            $ativoAcidentado = new Ativoemp();
+            $employee->setAcidentado($ativoAcidentado);
+        }
 
         // Criação dos objetos Ativoemp separados para cada campo
         if ($decimoterceiroValue) {
@@ -93,9 +124,9 @@ class PagueController extends AbstractController
                     $numerosocial = new Numerosocial();
                     $numerosocial->setNomeFilho($nomeFilho);
                     $numerosocial->setCpfFilho($cpfsFilhos[$index]);
-                    $numerosocial->setEmployee($employee);
 
-                    $this->numerosocialRepository->add($numerosocial, false);
+                    // Associa corretamente pelo método da entidade
+                    $employee->addNumerosocial($numerosocial);
                 }
             }
         }

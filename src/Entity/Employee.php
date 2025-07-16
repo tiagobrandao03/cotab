@@ -4,7 +4,8 @@ namespace App\Entity;
 
 use App\Repository\EmployeeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use phpDocumentor\Reflection\Types\Collection;
+use Doctrine\Common\Collections\Collection;
+//use phpDocumentor\Reflection\Types\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\ManyToMany;
 
@@ -21,17 +22,22 @@ class Employee
     private string $cpf ;
 
     #[ORM\OneToOne(mappedBy: "atfaltasJustificadas", targetEntity: Ativoemp::class, cascade: ["persist", "remove"])]
-    private ?Ativoemp $faltasJustificadas;
+    private ?Ativoemp $faltasJustificadas= null;
 
     #[ORM\OneToOne(mappedBy: "atfaltasInjustificadas", targetEntity: Ativoemp::class, cascade: ["persist", "remove"])]
-    private ?Ativoemp $faltasInjustificadas ;
+    private ?Ativoemp $faltasInjustificadas = null;
 
-    #[ORM\OneToOne(
+    //#[ORM\OneToOne(
+     //   mappedBy: "employee",
+   //    targetEntity: Numerosocial::class,
+     //   cascade: ["persist", "remove"]
+   // )]
+    //private ?Numerosocial $numerosocial= null ;
+    #[ORM\OneToMany(
         mappedBy: "employee",
         targetEntity: Numerosocial::class,
-        cascade: ["persist", "remove"]
-    )]
-    private ?Numerosocial $numerosocial ;
+        cascade: ["persist", "remove"])]
+    private Collection $numerosocial;
 
     #[ORM\OneToOne(
         mappedBy: "atdecimoterceiro",
@@ -44,34 +50,30 @@ class Employee
     #[ORM\OneToOne(
         mappedBy: "atacidentado",
         targetEntity: Ativoemp::class,
-        cascade: ["persist","remove"]
+        cascade: ["persist", "remove"]
     )]
-    private ?Ativoemp $acidentado ;
+    private ?Ativoemp $acidentado = null;
 
-
-    //atferias
-    //atdiastrabalho
-    //faltasemp
     #[ORM\OneToOne(
         mappedBy: "atferias",
         targetEntity: Ativoemp::class,
-        cascade: ["persist","remove"]
+        cascade: ["persist", "remove"]
     )]
-    private ?Ativoemp $ferias;
+    private ?Ativoemp $ferias = null;
 
 
     #[ORM\OneToOne(
-        mappedBy: "atdiastrabalho",
+        mappedBy: "atDiasTrabalho",
         targetEntity: Ativoemp::class,
-        cascade:["persist","remove"]
+        cascade: ["persist", "remove"]
     )]
-    private ?Ativoemp $daywork;
+    private ?Ativoemp $daywork = null;
 
-    //daywork atdiastrabalho
-    //ferias atferias
-    //atdiastrabalho daywork
-    //Ativo atemployee
-    #[ORM\OneToOne(inversedBy: 'ativoemp', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(
+        mappedBy: "atAtivo",
+        targetEntity: Ativoemp::class,
+        cascade: ["persist","remove"]
+    )]
     private ?Ativoemp $ativo = null;
     // No ArrayCollection needed!
 
@@ -79,42 +81,38 @@ class Employee
         #[ORM\Column]
         private string $name
     )
-    {}
+    {
+        $this->numerosocial = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
-
     public function getName(): ?string
     {
         return $this->name;
     }
-
     public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
-
     public function getCpf(): ?string
     {
         return $this->cpf;
     }
-
     public function setCpf(string $cpf): static
     {
         $this->cpf = $cpf;
 
         return $this;
     }
-
     public function getFaltasJustificadas(): ?Ativoemp
     {
         return $this->faltasJustificadas;
     }
-
     public function setFaltasJustificadas(?Ativoemp $faltasJustificadas): static
     {
         $this->faltasJustificadas = $faltasJustificadas;
@@ -133,12 +131,10 @@ class Employee
             $faltasJustificadas->setATfaltasJustificadas($this);
         }
     }
-
     public function getFaltasInjustificadas(): ?Ativoemp
     {
         return $this->faltasInjustificadas;
     }
-
     public function setFaltasInjustificadas(?Ativoemp $faltasInjustificadas): static
     {
         $this->faltasInjustificadas = $faltasInjustificadas;
@@ -153,23 +149,39 @@ class Employee
     public function setATfaltasInjustificadas(?Ativoemp $atfaltasInjustificadas):static{
         $this->atfaltasInjustificadas=$atfaltasInjustificadas;
         if($atfaltasInjustificadas !== null
-            && $atfaltasInjustificadas->getfaltasInjustificadas($this)){
+            && $atfaltasInjustificadas->getfaltasInjustificadas()!== $this){
             $atfaltasInjustificadas->setfaltasInjustificadas($this);
         }
     }
-    public function getNumerosocial(): ?Numerosocial
+
+    public function getNumerosocial(): Collection
     {
         return $this->numerosocial;
     }
-
-    public function setNumerosocial(?Numerosocial $numerosocial): void
+    public function addNumerosocial(Numerosocial $numerosocial): static
     {
-        $this->numerosocial = $numerosocial;
-        // Se estiver definindo um novo numerosocial
-        if ($numerosocial !== null && $numerosocial->getEmployee() !== $this) {
-            $numerosocial->setEmployee($this);
+        if (!$this->numerosocial->contains($numerosocial)) {
+            $this->numerosocial->add($numerosocial);
+
+            // seta o lado inverso sem gerar recursão
+            if ($numerosocial->getEmployee() !== $this) {
+                $numerosocial->setEmployee($this);
+            }
         }
 
+        return $this;
+    }
+
+    public function removeNumerosocial(Numerosocial $numerosocial): static
+    {
+        if ($this->numerosocial->removeElement($numerosocial)) {
+            // seta o lado inverso para null sem recursão
+            if ($numerosocial->getEmployee() === $this) {
+                $numerosocial->setEmployee(null);
+            }
+        }
+
+        return $this;
     }
     public function setEmployee(?Employee $employee): static
     {
@@ -179,18 +191,15 @@ class Employee
         }
         return $this;
     }
-
-
     public function getDecimoTerceiro(): ?string
     {
         return $this->decimoterceiro;
     }
-
     public function setDecimoTerceiro(?Ativoemp $decimoterceiro): void
     {
         $this->decimoterceiro = $decimoterceiro;
-        if ($decimoterceiro !==null && $decimoterceiro->
-            getATDecimoterceiro() !== $this){
+
+        if ($decimoterceiro !== null && $decimoterceiro->getATDecimoterceiro() !== $this) {
             $decimoterceiro->setATDecimoterceiro($this);
         }
     }
@@ -201,21 +210,17 @@ class Employee
         }
         return $this;
     }
-    public function getAcidentado(): ?string
+    public function getAcidentado():?Ativoemp
     {
         return $this->acidentado;
     }
-
     public function setAcidentado(?Ativoemp $acidentado): void
     {
         $this->acidentado = $acidentado;
-        if($acidentado !==null &&
-            $acidentado->getATAcidentado() !== $this){
+        if ($acidentado!==null && $acidentado->getATAcidentado()!== $this){
             $acidentado->setATAcidentado($this);
         }
-
     }
-
     public function setATAcidentado(?Ativoemp $atacidentado): static{
         $this->atacidentado = $atacidentado;
         if($atacidentado !==null && $atacidentado->getAcidentado() !== $this){
@@ -223,20 +228,19 @@ class Employee
         }
         return $this;
     }
-    public function getFerias(): ?string
+    public function getFerias():?Ativoemp
     {
         return $this->ferias;
     }
-
-    public function setFerias(string $ferias): void
+    public function setFerias(?Ativoemp $ferias): void
     {
         $this->ferias = $ferias;
-        if($ferias !=null && $ferias->
-            getATFerias() !== $this){
+        if ($ferias !== null && $ferias->getATFerias() !== $this) {
             $ferias->setATFerias($this);
         }
     }
-    public function setATFerias(?atferias $atferias): static
+
+    public function setATFerias(?Ativoemp $atferias): static
     {
         $this->atferias = $atferias;
         if($atferias !==null &&
@@ -245,20 +249,17 @@ class Employee
         }
         return $this;
     }
-    public function getDaywork(): ?string
+    public function getDaywork(): ?Ativoemp
     {
         return $this->daywork;
     }
-
-    public function setDaywork(string $daywork): void
+    public function setDaywork(?Ativoemp $daywork): void
     {
         $this->daywork = $daywork;
-        if($daywork !==null &&
-            $daywork->getATDiastrabalho() !==$this){
-            $daywork->setATDiastrabalho($this);
+        if ($daywork !== null && $daywork->getAtDiasTrabalho() !== $this) {
+            $daywork->setAtDiasTrabalho($this);
         }
     }
-
     public function setATDiastrabalho(?Ativoemp $atdiastrabalho): static
     {
         $this->atdiastrabalho = $atdiastrabalho;
@@ -274,7 +275,7 @@ class Employee
         return $this->ativo;
     }
 
-    public function setAtivo(Ativoemp $ativo): void
+    public function setAtivo(?Ativoemp $ativo): void
     {
         $this->ativo = $ativo;
         if ($ativo !==null &&
@@ -284,7 +285,7 @@ class Employee
         }
 
     }
-    public function setAtivoemp(bool $ativoemp): static
+    public function setAtivoemp(?Ativoemp $ativoemp): static
     {
         $this->ativoemp = $ativoemp;
         if (

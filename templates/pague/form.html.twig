@@ -20,20 +20,20 @@
 
         <!-- Decimo Terceiro -->
         <div class="mb-3">
-            <label for="decimoterceiro" class="form-label">13º Salário:</label>
-            <input type="text" name="decimoterceiro" id="decimoterceiro" class="form-control">
+            <label for="decimoterceiro" class="form-label">13º Salário (1 = Sim, 0 = Não):</label>
+            <input type="number" name="decimoterceiro" id="decimoterceiro" class="form-control" min="0" max="1">
         </div>
 
         <!-- Férias -->
         <div class="mb-3">
-            <label for="ferias" class="form-label">Férias:</label>
-            <input type="text" name="ferias" id="ferias" class="form-control">
+            <label for="ferias" class="form-label">Férias (1 = Sim, 0 = Não):</label>
+            <input type="number" name="ferias" id="ferias" class="form-control" min="0" max="1">
         </div>
 
         <!-- Acidentado -->
         <div class="mb-3">
-            <label for="acidentado" class="form-label">Acidentado:</label>
-            <input type="text" name="acidentado" id="acidentado" class="form-control">
+            <label for="acidentado" class="form-label">Acidentado (1 = Sim, 0 = Não):</label>
+            <input type="number" name="acidentado" id="acidentado" class="form-control" min="0" max="1">
         </div>
 
         <!-- Faltas Justificadas -->
@@ -50,14 +50,22 @@
 
         <!-- Dias Trabalhados -->
         <div class="mb-3">
-            <label for="dias_trabalhados" class="form-label">Dias Trabalhados:</label>
-            <input type="number" name="daywork" id="daywork" class="form-control">
+            <label for="daywork" class="form-label">Dias Trabalhados (1‑30):</label>
+            <input type="number"
+                   name="daywork"
+                   id="daywork"
+                   class="form-control"
+                   min="1"
+                   max="30"
+                   step="1"
+                   required>
         </div>
+
 
         <!-- Ativo -->
         <div class="mb-3">
-            <label for="ativo" class="form-label">Está Ativo? (true/false):</label>
-            <input type="text" name="ativo" id="ativo" class="form-control">
+            <label for="ativo" class="form-label">Ativo (1 = Sim, 0 = Não):</label>
+            <input type="number" name="ativo" id="ativo" class="form-control" min="0" max="1">
         </div>
 
         <div class="mb-3">
